@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    html,body{
+        width:100%;
+        height:100%;
+        overflow: hidden;
+        margin:0;
+        padding:0;
+        background: black;
+    }
+    div{
+        width: 600px;
+        height: 600px;
+        margin:20px auto;
+        background: rgb(221, 154, 53);
+    }    
+    #canvas{
+        border:1px solid black;
+    }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas id="canvas" width="600" height="600"></canvas>
+    </div>
+    <script>
+    var canvas = document.querySelector('#canvas');
+    var ctx = canvas.getContext('2d');
+    var data = {
+        head:{
+            x:200,y:200
+        },
+        body:[
+        {x:180,y:200},
+        {x:160,y:200},
+        {x:140,y:200},
+        {x:120,y:200}
+        ]
+    }
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillRect(data.head.x,data.head.y,20,20);
+        for(var i=0;i<data.body.length;i++){
+            ctx.fillRect(data.body[i].x,data.body[i].y,20,20);
+        }   
+    } 
+    draw()
+    window.onkeyup = function(e){
+        // console.log(e.keyCode)
+        switch(e.keyCode){
+            case 39:
+                // console.log('右');
+                //和蛇身的位置和蛇头之前的位置一样
+                data.body[0].x = data.head.x;
+                data.body[0].y = data.head.y;
+                data.head.x+=20;
+                draw()
+                break;
+            case 37:
+                // console.log('左');
+                data.body[0].x = data.head.x;
+                data.body[0].y = data.head.y;
+                data.head.x-=20;
+                draw()
+                break;
+            case 38:
+                // console.log('上');
+                data.body[0].x = data.head.x;
+                data.body[0].y = data.head.y;
+                data.head.y-=20;
+                draw()
+                break;
+            case 40:
+                // console.log('下');
+                data.body[0].x = data.head.x;
+                data.body[0].y = data.head.y;
+                data.head.y+=20;
+                draw()
+                break;
+        }
+    }
+    </script>
+</body>
+</html>
