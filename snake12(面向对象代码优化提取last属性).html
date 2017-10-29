@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    html,body{
+        width:100%;
+        height:100%;
+        overflow: hidden;
+        margin:0;
+        padding:0;
+        background: black;
+    }
+    div{
+        width: 600px;
+        height: 600px;
+        margin:20px auto;
+        background: rgb(221, 154, 53);
+    }    
+    #canvas{
+        border:1px solid black;
+    }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas id="canvas" width="600" height="600"></canvas>
+    </div>
+    <script>
+    var canvas = document.querySelector('#canvas');
+    var ctx = canvas.getContext('2d');
+
+    function Snake(obj){
+        this.head = obj.head;
+        this.body = obj.body;
+        this.last = null;
+    }    
+
+    Snake.prototype = {
+        constructor:Snake,
+        draw:function(){
+            //画蛇头
+            ctx.fillRect(this.head.x,this.head.y,20,20);
+            //画蛇身
+            for(var i=0;i<this.body.length;i++){
+                ctx.fillRect(this.body[i].x,this.body[i].y,20,20);
+            }
+        },
+        change:function(num,douzi){
+            switch(num){
+                case 39:
+                    // console.log('右');
+                    //和蛇身的位置和蛇头之前的位置一样
+                    this.changeBody();
+                    this.head.x+=20;
+                    //判断豆子是否被吃掉了
+                    if(this.head.x === douzi.x && this.head.y === douzi.y){
+                        // alert('吃掉了')
+                        this.body.push({x:this.last.x,y:this.last.y});
+                        douzi.generate();
+                    }
+                    break;
+                case 37:
+                    // console.log('左');
+                    this.changeBody();
+                    this.head.x-=20;
+                    //判断豆子是否被吃掉了
+                    if(this.head.x === douzi.x && this.head.y === douzi.y){
+                        // alert('吃掉了')
+                        this.body.push({x:this.last.x,y:this.last.y});
+                        douzi.generate();
+                    }
+                    break;
+                case 38:
+                    // console.log('上');
+                    this.changeBody();
+                    this.head.y-=20;
+                    //判断豆子是否被吃掉了
+                    if(this.head.x === douzi.x && this.head.y === douzi.y){
+                        // alert('吃掉了')
+                        this.body.push({x:this.last.x,y:this.last.y});
+                        douzi.generate();
+                    }
+                    break;
+                case 40:
+                    // console.log('下');
+                    this.changeBody();
+                    this.head.y+=20;
+                    //判断豆子是否被吃掉了
+                    if(this.head.x === douzi.x && this.head.y === douzi.y){
+                        // alert('吃掉了')
+                        this.body.push({x:this.last.x,y:this.last.y});
+                        douzi.generate();
+                    }
+                    break;
+            }
+        },
+        changeBody:function(){
+            if(this.body.length>=2){
+                this.last = {x:this.body[this.body.length-1].x,y:this.body[this.body.length-1].y};
+                for(var i=this.body.length-1;i>0;i--){
+                    this.body[i].x = this.body[i-1].x;
+                    this.body[i].y = this.body[i-1].y;
+                }
+            }
+
+            this.body[0].x = this.head.x;
+            this.body[0].y = this.head.y;
+        }
+    }
+
+    function Douzi(){
+        var obj = this.generate();
+    }
+
+    Douzi.prototype = {
+        constructor:Douzi,
+        generate:function(){
+            var num = Math.floor(Math.random()*600);
+            this.x = num - num % 20;
+            var num = Math.floor(Math.random()*600);
+            this.y = num - num % 20;
+        },
+        draw:function(){
+            ctx.fillRect(this.x,this.y,20,20);
+        }
+    }
+
+    //整个程序的入口函数
+    function main(){
+        var snake = new Snake({
+            head:{
+                x:200,y:200
+            },
+            body:[
+                {x:180,y:200},
+                {x:160,y:200},
+                {x:140,y:200},
+                {x:120,y:200}
+            ]
+        });
+        var douzi = new Douzi();
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        snake.draw();
+        douzi.draw();
+        window.onkeyup = function(e){
+            snake.change(e.keyCode,douzi);//因为change方法内部用到了，所以要传入douzi对象
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            snake.draw();
+            
+            douzi.draw();
+        }
+    }
+
+    main();
+    </script>
+</body>
+</html>
